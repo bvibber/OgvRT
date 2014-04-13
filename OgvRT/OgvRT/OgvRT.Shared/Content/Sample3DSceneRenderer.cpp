@@ -7,6 +7,7 @@ using namespace OgvRT;
 
 using namespace DirectX;
 using namespace Windows::Foundation;
+using namespace Microsoft::WRL;
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
@@ -63,17 +64,60 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
+
+	CreateTexture(640, 480, m_textureY, m_textureViewY);
+	CreateTexture(640, 480, m_textureCb, m_textureViewCb);
+	CreateTexture(640, 480, m_textureCr, m_textureViewCr);
 }
+
+void Sample3DSceneRenderer::UpdateTexture(ComPtr<ID3D11Texture2D> &tex, const char *bytes, int nbytes) {
+	auto context = m_deviceResources->GetD3DDeviceContext();
+
+	ComPtr<ID3D11Resource> res;
+	tex.As(&res);
+
+	D3D11_MAPPED_SUBRESOURCE map;
+	context->Map(res.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
+
+	memcpy(map.pData, bytes, nbytes);
+
+	context->Unmap(res.Get(), 0);
+}
+
+void Sample3DSceneRenderer::CreateTexture(int width, int height, ComPtr<ID3D11Texture2D> &tex, ComPtr<ID3D11ShaderResourceView>& view)
+{
+	D3D11_TEXTURE2D_DESC desc;
+	desc.Width = width;
+	desc.Height = height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DYNAMIC;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	desc.MiscFlags = 0;
+
+	auto device = m_deviceResources->GetD3DDevice();
+	if (device->CreateTexture2D(&desc, NULL, tex.GetAddressOf()) != S_OK) {
+		throw std::exception("no texture");
+	}
+
+	ComPtr<ID3D11Resource> res;
+	tex.As(&res);
+	if (device->CreateShaderResourceView(res.Get(), NULL, view.GetAddressOf()) != S_OK) {
+		throw std::exception("no texture view");
+	}
+}
+
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
 void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 {
 	if (!m_tracking)
 	{
-		// Convert degrees to radians, then convert seconds to rotation angle
-		float radiansPerSecond = XMConvertToRadians(m_degreesPerSecond);
-		double totalRotation = timer.GetTotalSeconds() * radiansPerSecond;
-		float radians = static_cast<float>(fmod(totalRotation, XM_2PI));
+		float radians = 0;
 
 		Rotate(radians);
 	}

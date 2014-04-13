@@ -24,6 +24,8 @@ namespace OgvRT
 
 	private:
 		void Rotate(float radians);
+		void CreateTexture(int width, int height, Microsoft::WRL::ComPtr<ID3D11Texture2D> &tex, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &view);
+		void UpdateTexture(Microsoft::WRL::ComPtr<ID3D11Texture2D> &tex, const char *bytes, int nbytes);
 
 	private:
 		// Cached pointer to device resources.
@@ -36,6 +38,12 @@ namespace OgvRT
 		Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_vertexShader;
 		Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_pixelShader;
 		Microsoft::WRL::ComPtr<ID3D11Buffer>		m_constantBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D>     m_textureY;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D>     m_textureCb;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D>     m_textureCr;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_textureViewY;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_textureViewCb;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_textureViewCr;
 
 		// System resources for cube geometry.
 		ModelViewProjectionConstantBuffer	m_constantBufferData;

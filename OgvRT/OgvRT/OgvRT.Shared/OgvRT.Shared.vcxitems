@@ -14,6 +14,8 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)OgvCodec.cpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)OgvCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OgvRTMain.h" />
     <ClCompile Include="$(MSBuildThisFileDirectory)OgvRTMain.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

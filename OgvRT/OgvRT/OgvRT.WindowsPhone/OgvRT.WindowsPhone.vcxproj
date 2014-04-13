@@ -94,6 +94,11 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir>$(SolutionDir)\Output\WindowsPhone\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\OgvRT.WindowsPhone\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemGroup>
     <Image Include="Assets\Logo.scale-240.png" />
     <Image Include="Assets\SmallLogo.scale-240.png" />
@@ -130,6 +135,17 @@
     <Page Include="DirectXPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libogg\winrt\VS2013\libogg.WindowsPhone\libogg.WindowsPhone.vcxproj">
+      <Project>{e1fbe4b1-56ad-4fe0-963e-9a599e842e79}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\libtheora\winrt\VS2013\libtheora.WindowsPhone\libtheora.WindowsPhone.vcxproj">
+      <Project>{ca2978d4-286a-4aab-94f6-f020f231625c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\libvorbis\winrt\VS2013\libvorbis.WindowsPhone\libvorbis.WindowsPhone.vcxproj">
+      <Project>{9c660b0e-b497-4f71-8faa-f2543a3df617}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

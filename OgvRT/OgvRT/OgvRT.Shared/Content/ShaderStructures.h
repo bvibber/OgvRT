@@ -13,7 +13,7 @@ namespace OgvRT
 	// Used to send per-vertex data to the vertex shader.
 	struct VertexPositions
 	{
-		DirectX::XMFLOAT3 pos;
+		DirectX::XMFLOAT2 pos;
 		DirectX::XMFLOAT2 lumaPos;
 		DirectX::XMFLOAT2 chromaPos;
 	};

@@ -1,6 +1,9 @@
 #pragma once
 
+#include <functional>
 #include <memory>
+#include <vector>
+
 
 namespace OgvCodec {
 
@@ -25,11 +28,11 @@ namespace OgvCodec {
 	/// You must not assume that data in them can be accessed
 	/// after another call into further processing.
 	struct Frame {
-		const byte *bytesY;
+		const unsigned char *bytesY;
 		int strideY;
-		const byte *bytesCb;
+		const unsigned char *bytesCb;
 		int strideCb;
-		const byte *bytesCr;
+		const unsigned char *bytesCr;
 		int strideCr;
 
 		int width;
@@ -53,18 +56,18 @@ namespace OgvCodec {
 		Codec();
 		~Codec();
 
-		void receiveInput(std::vector<byte> buffer);
-		boolean process();
+		void receiveInput(std::vector<unsigned char> buffer);
+		bool process();
 
-		boolean hasVideo();
+		bool hasVideo();
 		VideoInfo videoInfo();
-		boolean frameReady();
-		boolean decodeFrame(std::function<void(Frame)>);
+		bool frameReady();
+		bool decodeFrame(std::function<void(Frame)>);
 
-		boolean hasAudio();
+		bool hasAudio();
 		AudioInfo audioInfo();
-		boolean audioReady();
-		boolean decodeAudio(std::function<void(AudioBuffer)>);
+		bool audioReady();
+		bool decodeAudio(std::function<void(AudioBuffer)>);
 
 	private:
 		class impl;

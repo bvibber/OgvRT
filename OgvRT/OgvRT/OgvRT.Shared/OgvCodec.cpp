@@ -1,5 +1,3 @@
-#include "pch.h"
-
 #include "OgvCodec.h"
 
 extern "C" {
@@ -66,18 +64,18 @@ public:
 
 	void init(int process_audio_flag, int process_video_flag);
 
-	void receiveInput(std::vector<byte> buffer);
-	boolean process();
+	void receiveInput(std::vector<unsigned char> buffer);
+	bool process();
 
-	boolean hasVideo();
+	bool hasVideo();
 	VideoInfo videoInfo();
-	boolean frameReady();
-	boolean decodeFrame(std::function<void(Frame)>);
+	bool frameReady();
+	bool decodeFrame(std::function<void(Frame)>);
 
-	boolean hasAudio();
+	bool hasAudio();
 	AudioInfo audioInfo();
-	boolean audioReady();
-	boolean decodeAudio(std::function<void(AudioBuffer)>);
+	bool audioReady();
+	bool decodeAudio(std::function<void(AudioBuffer)>);
 
 private:
 	int queue_page(ogg_page *page);
@@ -98,19 +96,19 @@ Codec::~Codec() {
 	// do I have to do anything to dispose of the state? Smart pointers and all...
 }
 
-void Codec::receiveInput(std::vector<byte> buffer) {
+void Codec::receiveInput(std::vector<unsigned char> buffer) {
 	pimpl->receiveInput(buffer);
 }
 
-boolean Codec::process() {
+bool Codec::process() {
 	return pimpl->process();
 }
 
-boolean Codec::decodeFrame(std::function<void(Frame)> callback) {
+bool Codec::decodeFrame(std::function<void(Frame)> callback) {
 	return pimpl->decodeFrame(callback);
 }
 
-boolean Codec::decodeAudio(std::function<void(AudioBuffer)> callback) {
+bool Codec::decodeAudio(std::function<void(AudioBuffer)> callback) {
 	return pimpl->decodeAudio(callback);
 }
 
@@ -121,18 +119,18 @@ AudioInfo Codec::audioInfo(){
 	return pimpl->audioInfo();
 }
 
-boolean Codec::hasVideo() {
+bool Codec::hasVideo() {
 	return pimpl->hasVideo();
 }
-boolean Codec::hasAudio() {
+bool Codec::hasAudio() {
 	return pimpl->hasAudio();
 }
 
-boolean Codec::frameReady() {
+bool Codec::frameReady() {
 	return pimpl->frameReady();
 }
 
-boolean Codec::audioReady() {
+bool Codec::audioReady() {
 	return pimpl->audioReady();
 }
 
@@ -193,18 +191,18 @@ void Codec::impl::init(int process_audio_flag, int process_video_flag) {
 	th_info_init(&theoraInfo);
 }
 
-boolean Codec::impl::hasVideo() {
+bool Codec::impl::hasVideo() {
 	return (theora_p > 0);
 }
-boolean Codec::impl::hasAudio() {
+bool Codec::impl::hasAudio() {
 	return (vorbis_p > 0);
 }
 
-boolean Codec::impl::frameReady() {
+bool Codec::impl::frameReady() {
 	return videobuf_ready;
 }
 
-boolean Codec::impl::audioReady() {
+bool Codec::impl::audioReady() {
 	return audiobuf_ready;
 }
 
@@ -380,7 +378,7 @@ void Codec::impl::processDecoding() {
 	}
 }
 
-boolean Codec::impl::decodeFrame(std::function<void (Frame)> callback) {
+bool Codec::impl::decodeFrame(std::function<void (Frame)> callback) {
 	if (ogg_stream_packetout(&theoraStreamState, &videoPacket) <= 0) {
 		printf("Theora packet didn't come out of stream\n");
 		return 0;
@@ -413,7 +411,7 @@ boolean Codec::impl::decodeFrame(std::function<void (Frame)> callback) {
 	}
 }
 
-boolean Codec::impl::decodeAudio(std::function<void (AudioBuffer)> callback) {
+bool Codec::impl::decodeAudio(std::function<void (AudioBuffer)> callback) {
 	int packetRet = 0;
 	audiobuf_ready = 0;
 	int foundSome = 0;
@@ -441,7 +439,7 @@ boolean Codec::impl::decodeAudio(std::function<void (AudioBuffer)> callback) {
 	return foundSome;
 }
 
-void Codec::impl::receiveInput(std::vector<byte> buffer) {
+void Codec::impl::receiveInput(std::vector<unsigned char> buffer) {
 	if (buffer.size() > 0) {
 		char *dest = ogg_sync_buffer(&oggSyncState, buffer.size());
 		memcpy(dest, buffer.data(), buffer.size());
@@ -449,7 +447,7 @@ void Codec::impl::receiveInput(std::vector<byte> buffer) {
 	}
 }
 
-boolean Codec::impl::process() {
+bool Codec::impl::process() {
 	if (needData) {
 		if (ogg_sync_pageout(&oggSyncState, &oggPage) > 0) {
 			queue_page(&oggPage);

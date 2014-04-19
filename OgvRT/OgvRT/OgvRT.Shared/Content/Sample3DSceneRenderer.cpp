@@ -65,12 +65,34 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
 
-	CreateTexture(640, 480, m_textureY, m_textureViewY);
-	CreateTexture(640, 480, m_textureCb, m_textureViewCb);
-	CreateTexture(640, 480, m_textureCr, m_textureViewCr);
+	//CreateTexture(640, 480, m_textureY, m_textureViewY);
+	//CreateTexture(640, 480, m_textureCb, m_textureViewCb);
+	//CreateTexture(640, 480, m_textureCr, m_textureViewCr);
 }
 
-void Sample3DSceneRenderer::UpdateTexture(ComPtr<ID3D11Texture2D> &tex, const char *bytes, int nbytes) {
+void Sample3DSceneRenderer::UpdateTextures(OgvCodec::Frame frame) {
+	int lumaWidth = frame.strideY,
+		chromaWidth = frame.strideCb,
+		lumaHeight = frame.height,
+		chromaHeight = frame.height >> frame.vdec;
+	
+	if (!m_textureY) {
+		CreateTexture(lumaWidth, lumaHeight, m_textureY, m_textureViewY);
+	}
+	UpdateTexture(m_textureY, frame.bytesY, lumaWidth * lumaHeight);
+
+	if (!m_textureCb) {
+		CreateTexture(chromaWidth, chromaHeight, m_textureCb, m_textureViewCb);
+	}
+	UpdateTexture(m_textureCb, frame.bytesCb, chromaWidth * chromaHeight);
+
+	if (!m_textureCr) {
+		CreateTexture(chromaWidth, chromaHeight, m_textureCr, m_textureViewCr);
+	}
+	UpdateTexture(m_textureCr, frame.bytesCr, chromaWidth * chromaHeight);
+}
+
+void Sample3DSceneRenderer::UpdateTexture(ComPtr<ID3D11Texture2D> &tex, const byte *bytes, int nbytes) {
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
 	ComPtr<ID3D11Resource> res;
@@ -110,7 +132,6 @@ void Sample3DSceneRenderer::CreateTexture(int width, int height, ComPtr<ID3D11Te
 		throw std::exception("no texture view");
 	}
 }
-
 
 // Called once per frame, rotates the cube and calculates the model and view matrices.
 void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)

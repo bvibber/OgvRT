@@ -19,6 +19,8 @@ OgvRTMain::OgvRTMain(const std::shared_ptr<DX::DeviceResources>& deviceResources
 
 	m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
 
+	m_codec = std::unique_ptr<OgvCodec::Codec>(new OgvCodec::Codec());
+
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
 	/*
@@ -65,6 +67,19 @@ void OgvRTMain::StartRenderLoop()
 
 	// Run task on a dedicated high priority background thread.
 	m_renderLoopWorker = ThreadPool::RunAsync(workItemHandler, WorkItemPriority::High, WorkItemOptions::TimeSliced);
+
+	// Load up our test image
+	auto src = ref new Platform::String(L"https://upload.wikimedia.org/wikipedia/commons/a/aa/Thresher-Sharks-Use-Tail-Slaps-as-a-Hunting-Strategy-pone.0067380.s003.ogv");
+	auto uri = ref new Windows::Foundation::Uri(src);
+	auto client = ref new Windows::Web::Http::HttpClient();
+	create_task(client->GetAsync(uri)).then([&](Windows::Web::Http::HttpResponseMessage^ message) {
+		return message->Content->ReadAsBufferAsync();
+	}).then([&](Windows::Storage::Streams::IBuffer^ fileBuffer) {
+		std::vector<byte> returnBuffer;
+		returnBuffer.resize(fileBuffer->Length);
+		Windows::Storage::Streams::DataReader::FromBuffer(fileBuffer)->ReadBytes(Platform::ArrayReference<byte>(returnBuffer.data(), fileBuffer->Length));
+		m_codec->receiveInput(returnBuffer);
+	});
 }
 
 void OgvRTMain::StopRenderLoop()
@@ -76,6 +91,13 @@ void OgvRTMain::StopRenderLoop()
 void OgvRTMain::Update() 
 {
 	ProcessInput();
+
+	m_codec->process();
+	if (m_codec->frameReady()) {
+		m_codec->decodeFrame([&](OgvCodec::Frame frame) {
+			m_sceneRenderer->UpdateTextures(frame);
+		});
+	}
 
 	// Update scene objects.
 	m_timer.Tick([&]()

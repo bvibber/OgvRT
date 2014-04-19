@@ -4,6 +4,8 @@
 #include "ShaderStructures.h"
 #include "..\Common\StepTimer.h"
 
+#include "OgvCodec.h"
+
 namespace OgvRT
 {
 	// This sample renderer instantiates a basic rendering pipeline.
@@ -15,6 +17,7 @@ namespace OgvRT
 		void CreateWindowSizeDependentResources();
 		void ReleaseDeviceDependentResources();
 		void Update(DX::StepTimer const& timer);
+		void UpdateTextures(OgvCodec::Frame frame);
 		void Render();
 		void StartTracking();
 		void TrackingUpdate(float positionX);
@@ -25,7 +28,7 @@ namespace OgvRT
 	private:
 		void Rotate(float radians);
 		void CreateTexture(int width, int height, Microsoft::WRL::ComPtr<ID3D11Texture2D> &tex, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &view);
-		void UpdateTexture(Microsoft::WRL::ComPtr<ID3D11Texture2D> &tex, const char *bytes, int nbytes);
+		void UpdateTexture(Microsoft::WRL::ComPtr<ID3D11Texture2D> &tex, const byte *bytes, int nbytes);
 
 	private:
 		// Cached pointer to device resources.

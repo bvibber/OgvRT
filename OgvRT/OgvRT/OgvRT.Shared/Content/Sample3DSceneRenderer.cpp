@@ -234,6 +234,23 @@ void Sample3DSceneRenderer::Render()
 		0
 		);
 
+	// Attach our textures
+	context->PSSetShaderResources(
+		0,
+		1,
+		m_textureViewY.GetAddressOf()
+		);
+	context->PSSetShaderResources(
+		1,
+		1,
+		m_textureViewCb.GetAddressOf()
+		);
+	context->PSSetShaderResources(
+		2,
+		1,
+		m_textureViewCr.GetAddressOf()
+		);
+
 	// Draw the objects.
 	context->DrawIndexed(
 		m_indexCount,

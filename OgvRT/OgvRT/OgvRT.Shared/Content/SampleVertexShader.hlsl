@@ -9,7 +9,7 @@ cbuffer ModelViewProjectionConstantBuffer : register(b0)
 // Per-vertex data used as input to the vertex shader.
 struct VertexShaderInput
 {
-	float2 pos : SV_POSITION;
+	float2 pos : POSITION;
 	float2 vLumaPosition : TEXCOORD0;
 	float2 vChromaPosition : TEXCOORD1;
 };
@@ -27,7 +27,7 @@ PixelShaderInput main(VertexShaderInput input)
 {
 	PixelShaderInput output;
 
-	output.pos = float4(input.pos, 0, 0);
+	output.pos = float4(input.pos, 0, 1);
 	output.vLumaPosition = input.vLumaPosition;
 	output.vChromaPosition = input.vChromaPosition;
 

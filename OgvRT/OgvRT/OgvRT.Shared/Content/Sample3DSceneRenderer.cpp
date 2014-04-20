@@ -77,17 +77,17 @@ void Sample3DSceneRenderer::UpdateTextures(OgvCodec::Frame frame) {
 		chromaHeight = frame.height >> frame.vdec;
 	
 	if (!m_textureY) {
-		CreateTexture(lumaWidth, lumaHeight, m_textureY, m_textureViewY);
+		CreateTexture(lumaWidth, lumaHeight, m_textureY, m_textureViewY, m_samplerY);
 	}
 	UpdateTexture(m_textureY, frame.bytesY, lumaWidth * lumaHeight);
 
 	if (!m_textureCb) {
-		CreateTexture(chromaWidth, chromaHeight, m_textureCb, m_textureViewCb);
+		CreateTexture(chromaWidth, chromaHeight, m_textureCb, m_textureViewCb, m_samplerCb);
 	}
 	UpdateTexture(m_textureCb, frame.bytesCb, chromaWidth * chromaHeight);
 
 	if (!m_textureCr) {
-		CreateTexture(chromaWidth, chromaHeight, m_textureCr, m_textureViewCr);
+		CreateTexture(chromaWidth, chromaHeight, m_textureCr, m_textureViewCr, m_samplerCr);
 	}
 	UpdateTexture(m_textureCr, frame.bytesCr, chromaWidth * chromaHeight);
 }
@@ -106,7 +106,7 @@ void Sample3DSceneRenderer::UpdateTexture(ComPtr<ID3D11Texture2D> &tex, const by
 	context->Unmap(res.Get(), 0);
 }
 
-void Sample3DSceneRenderer::CreateTexture(int width, int height, ComPtr<ID3D11Texture2D> &tex, ComPtr<ID3D11ShaderResourceView>& view)
+void Sample3DSceneRenderer::CreateTexture(int width, int height, ComPtr<ID3D11Texture2D> &tex, ComPtr<ID3D11ShaderResourceView>& view, Microsoft::WRL::ComPtr<ID3D11SamplerState> &sampler)
 {
 	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = width;
@@ -130,6 +130,18 @@ void Sample3DSceneRenderer::CreateTexture(int width, int height, ComPtr<ID3D11Te
 	tex.As(&res);
 	if (device->CreateShaderResourceView(res.Get(), NULL, view.GetAddressOf()) != S_OK) {
 		throw std::exception("no texture view");
+	}
+
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	if (device->CreateSamplerState(&samplerDesc, sampler.GetAddressOf()) != S_OK) {
+		throw std::exception("no sampler state");
 	}
 }
 
@@ -235,21 +247,14 @@ void Sample3DSceneRenderer::Render()
 		);
 
 	// Attach our textures
-	context->PSSetShaderResources(
-		0,
-		1,
-		m_textureViewY.GetAddressOf()
-		);
-	context->PSSetShaderResources(
-		1,
-		1,
-		m_textureViewCb.GetAddressOf()
-		);
-	context->PSSetShaderResources(
-		2,
-		1,
-		m_textureViewCr.GetAddressOf()
-		);
+	context->PSSetShaderResources(0, 1, m_textureViewY.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_samplerY.GetAddressOf());
+
+	context->PSSetShaderResources(1, 1, m_textureViewCb.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_samplerCb.GetAddressOf());
+
+	context->PSSetShaderResources(2, 1, m_textureViewCr.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_samplerCr.GetAddressOf());
 
 	// Draw the objects.
 	context->DrawIndexed(

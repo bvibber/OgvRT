@@ -1,9 +1,9 @@
 #pragma once
 
 class OgvByteStreamHandler WrlSealed
-    : public Microsoft::WRL::RuntimeClass<
-        Microsoft::WRL::RuntimeClassFlags< Microsoft::WRL::RuntimeClassType::WinRtClassicComMix >, 
-        ABI::Windows::Media::IMediaExtension,
+    : public RuntimeClass<
+        RuntimeClassFlags< RuntimeClassType::WinRtClassicComMix >, 
+		ABI::Windows::Media::IMediaExtension,
         IMFByteStreamHandler 
         >
 {

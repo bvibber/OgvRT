@@ -1,7 +1,8 @@
 #include "pch.h"
+
 #include "OgvSource.h"
+#include "OgvStream.h"
 #include "OgvByteStreamHandler.h"
-#include <wrl\module.h>
 
 ActivatableClass(OgvByteStreamHandler);
 

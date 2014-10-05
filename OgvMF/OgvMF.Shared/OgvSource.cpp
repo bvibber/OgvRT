@@ -1,11 +1,11 @@
 #include "pch.h"
+
 #include "OgvSource.h"
-#include <wrl\module.h>
+#include "OgvStream.h"
 
 ComPtr<OgvSource> OgvSource::CreateInstance()
 {
-	ComPtr<OgvSource> spSource;
-	spSource.Attach(new (std::nothrow) OgvSource());
+	ComPtr<OgvSource> spSource = Make<OgvSource>();
 	if (spSource == nullptr) {
 		throw ref new OutOfMemoryException();
 	}
@@ -26,8 +26,6 @@ concurrency::task<void> OgvSource::OpenAsync(IMFByteStream *pStream)
 
 	DWORD dwCaps = 0;
 
-	AutoLock lock(m_critSec);
-
 	// Create the media event queue.
 	ThrowIfError(MFCreateEventQueue(m_spEventQueue.ReleaseAndGetAddressOf()));
 
@@ -35,108 +33,163 @@ concurrency::task<void> OgvSource::OpenAsync(IMFByteStream *pStream)
 	m_spByteStream = pStream;
 
 	// Validate the capabilities of the byte stream.
-	// The byte stream must be readable and seekable.
+	// The byte stream must be readable.
 	ThrowIfError(pStream->GetCapabilities(&dwCaps));
 
-	if ((dwCaps & MFBYTESTREAM_IS_SEEKABLE) == 0)
-	{
-		ThrowException(MF_E_BYTESTREAM_NOT_SEEKABLE);
-	}
-	else if ((dwCaps & MFBYTESTREAM_IS_READABLE) == 0)
+	if ((dwCaps & MFBYTESTREAM_IS_READABLE) == 0)
 	{
 		ThrowException(MF_E_UNSUPPORTED_BYTESTREAM_TYPE);
 	}
-
-	// @todo create our codec objects and stuff
-
-	//RequestData(READ_SIZE);
 
 	m_state = STATE_OPENING;
 
 	return concurrency::create_task(_openedEvent);
 }
 
-OgvSource::OgvSource()
+OgvSource::OgvSource() :
+	m_state(STATE_INVALID),
+	m_flRate(1.0f)
 {
+	auto module = ::Microsoft::WRL::GetModuleBase();
+	if (module != nullptr)
+	{
+		module->IncrementObjectCount();
+	}
 }
 
 OgvSource::~OgvSource()
 {
-}
-
-// IUnknown
-HRESULT OgvSource::QueryInterface(REFIID riid, void **ppv)
-{
-	if (ppv == nullptr) {
-		return E_POINTER;
-	}
-
-	HRESULT hr = E_NOINTERFACE;
-	if (riid == IID_IUnknown ||
-		riid == IID_IMFMediaEventGenerator ||
-		riid == IID_IMFMediaSource)
+	if (m_state != STATE_SHUTDOWN)
 	{
-		(*ppv) = static_cast<IMFMediaSource *>(this);
-		AddRef();
-		hr = S_OK;
-	}
-	else if (riid == IID_IMFGetService)
-	{
-		(*ppv) = static_cast<IMFGetService *>(this);
-		AddRef();
-		hr = S_OK;
-	}
-	else if (riid == IID_IMFRateControl)
-	{
-		(*ppv) = static_cast<IMFRateControl *>(this);
-		AddRef();
-		hr = S_OK;
+		Shutdown();
 	}
 
-	return hr;
-}
-
-ULONG OgvSource::AddRef()
-{
-	return _InterlockedIncrement(&m_cRef);
-}
-
-ULONG OgvSource::Release()
-{
-	LONG cRef = _InterlockedDecrement(&m_cRef);
-	if (cRef == 0)
+	auto module = ::Microsoft::WRL::GetModuleBase();
+	if (module != nullptr)
 	{
-		delete this;
+		module->DecrementObjectCount();
 	}
-	return cRef;
 }
 
 // IMFMediaEventGenerator
 HRESULT OgvSource::BeginGetEvent(IMFAsyncCallback *pCallback, IUnknown *punkState)
 {
-	return E_NOTIMPL;
+	HRESULT hr = S_OK;
+
+	AutoLock lock(m_mutex);
+
+	hr = CheckShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		hr = m_spEventQueue->BeginGetEvent(pCallback, punkState);
+	}
+
+	return hr;
 }
 
 HRESULT OgvSource::EndGetEvent(IMFAsyncResult *pResult, IMFMediaEvent **ppEvent)
 {
-	return E_NOTIMPL;
+	HRESULT hr = S_OK;
+
+	AutoLock lock(m_mutex);
+
+	hr = CheckShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		hr = m_spEventQueue->EndGetEvent(pResult, ppEvent);
+	}
+
+	return hr;
 }
 
 HRESULT OgvSource::GetEvent(DWORD dwFlags, IMFMediaEvent **ppEvent)
 {
-	return E_NOTIMPL;
+	// NOTE:
+	// GetEvent can block indefinitely, so we don't hold the lock.
+	// This requires some juggling with the event queue pointer.
+
+	HRESULT hr = S_OK;
+
+	ComPtr<IMFMediaEventQueue> spQueue;
+
+	{
+		AutoLock lock(m_mutex);
+
+		// Check shutdown
+		hr = CheckShutdown();
+
+		// Get the pointer to the event queue.
+		if (SUCCEEDED(hr))
+		{
+			spQueue = m_spEventQueue;
+		}
+	}
+
+	// Now get the event.
+	if (SUCCEEDED(hr))
+	{
+		hr = spQueue->GetEvent(dwFlags, ppEvent);
+	}
+
+	return hr;
 }
 
 HRESULT OgvSource::QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, const PROPVARIANT *pvValue)
 {
-	return E_NOTIMPL;
+	HRESULT hr = S_OK;
+
+	AutoLock lock(m_mutex);
+
+	hr = CheckShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		hr = m_spEventQueue->QueueEventParamVar(met, guidExtendedType, hrStatus, pvValue);
+	}
+
+	return hr;
 }
 
 
 // IMFMediaSource
 HRESULT OgvSource::CreatePresentationDescriptor(IMFPresentationDescriptor **ppPresentationDescriptor)
 {
-	return E_NOTIMPL;
+	if (ppPresentationDescriptor == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT hr = S_OK;
+
+	AutoLock lock(m_mutex);
+
+	// Fail if the source is shut down.
+	hr = CheckShutdown();
+
+	// Fail if the source was not initialized yet.
+	if (SUCCEEDED(hr))
+	{
+		hr = IsInitialized();
+	}
+
+	// Do we have a valid presentation descriptor?
+	if (SUCCEEDED(hr))
+	{
+		if (m_spPresentationDescriptor == nullptr)
+		{
+			hr = MF_E_NOT_INITIALIZED;
+		}
+	}
+
+	// Clone our presentation descriptor.
+	if (SUCCEEDED(hr))
+	{
+		hr = m_spPresentationDescriptor->Clone(ppPresentationDescriptor);
+	}
+
+	return hr;
 }
 
 HRESULT OgvSource::GetCharacteristics(DWORD *pdwCharacteristics)
@@ -146,12 +199,70 @@ HRESULT OgvSource::GetCharacteristics(DWORD *pdwCharacteristics)
 
 HRESULT OgvSource::Pause()
 {
-	return E_NOTIMPL;
+	AutoLock lock(m_mutex);
+
+	HRESULT hr = S_OK;
+
+	// Fail if the source is shut down.
+	hr = CheckShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		hr = QueueAsyncOp([this] {
+			try {
+				if (m_state != STATE_STARTED) {
+					ThrowException(MF_E_INVALID_STATE_TRANSITION);
+				}
+				else
+				{
+					m_state = STATE_PAUSED;
+					ForEachStream([](ComPtr<OgvStream> stream) {
+						stream->Pause();
+					});
+				}
+				m_spEventQueue->QueueEventParamVar(MESourcePaused, GUID_NULL, S_OK, nullptr);
+			}
+			catch (Exception ^ex) {
+				m_spEventQueue->QueueEventParamVar(MESourcePaused, GUID_NULL, ex->HResult, nullptr);
+			}
+		});
+	}
+
+	return hr;
 }
 
 HRESULT OgvSource::Shutdown()
 {
-	return E_NOTIMPL;
+
+	AutoLock lock(m_mutex);
+
+	HRESULT hr = S_OK;
+
+	// Fail if the source is shut down.
+	hr = CheckShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		ForEachStream([](ComPtr<OgvStream> stream) {
+			stream->Shutdown();
+		});
+
+		m_state = STATE_SHUTDOWN;
+
+		if (m_spEventQueue)
+		{
+			(void)m_spEventQueue->Shutdown();
+		}
+
+		m_streams.empty();
+		m_asyncOpQueue.empty();
+
+		m_spEventQueue.Reset();
+		m_spPresentationDescriptor.Reset();
+		m_spByteStream.Reset();
+	}
+
+	return hr;
 }
 
 HRESULT OgvSource::Start(
@@ -165,7 +276,36 @@ HRESULT OgvSource::Start(
 
 HRESULT OgvSource::Stop()
 {
-	return E_NOTIMPL;
+	AutoLock lock(m_mutex);
+
+	HRESULT hr = S_OK;
+
+	// Fail if the source is shut down.
+	hr = CheckShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		hr = QueueAsyncOp([this] {
+			try {
+				if (m_state != STATE_STARTED) {
+					ThrowException(MF_E_INVALID_STATE_TRANSITION);
+				}
+				else
+				{
+					m_state = STATE_STOPPED;
+					ForEachStream([](ComPtr<OgvStream> stream) {
+						stream->Stop();
+					});
+				}
+				m_spEventQueue->QueueEventParamVar(MESourceStopped, GUID_NULL, S_OK, nullptr);
+			}
+			catch (Exception ^ex) {
+				m_spEventQueue->QueueEventParamVar(MESourceStopped, GUID_NULL, ex->HResult, nullptr);
+			}
+		});
+	}
+
+	return hr;
 }
 
 // IMFGetService
@@ -177,10 +317,59 @@ HRESULT OgvSource::GetService(_In_ REFGUID guidService, _In_ REFIID riid, _Out_o
 // IMFRateControl
 HRESULT OgvSource::SetRate(BOOL fThin, float flRate)
 {
-	return E_NOTIMPL;
+	if (fThin)
+	{
+		return MF_E_THINNING_UNSUPPORTED;
+	}
+	if (flRate < 0.0f)
+	{
+		return MF_E_UNSUPPORTED_RATE;
+	}
+
+	AutoLock lock(m_mutex);
+
+	HRESULT hr = S_OK;
+
+	// Fail if the source is shut down.
+	hr = CheckShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		if (flRate != m_flRate) {
+			hr = QueueAsyncOp([this, flRate] {
+				try {
+					if (m_state != STATE_STARTED) {
+						ThrowException(MF_E_INVALID_STATE_TRANSITION);
+					}
+					else
+					{
+						m_state = STATE_PAUSED;
+						ForEachStream([flRate](ComPtr<OgvStream> stream) {
+							stream->SetRate(flRate);
+						});
+					}
+					m_spEventQueue->QueueEventParamVar(MESourceRateChanged, GUID_NULL, S_OK, nullptr);
+				}
+				catch (Exception ^ex) {
+					m_spEventQueue->QueueEventParamVar(MESourceRateChanged, GUID_NULL, ex->HResult, nullptr);
+				}
+			});
+		}
+	}
+
+	return hr;
 }
 
 HRESULT OgvSource::GetRate(_Inout_opt_ BOOL *pfThin, _Inout_opt_ float *pflRate)
 {
-	return E_NOTIMPL;
+	if (pfThin == nullptr || pflRate == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	AutoLock lock(m_mutex);
+	*pfThin = FALSE;
+	*pflRate = m_flRate;
+
+	return S_OK;
 }

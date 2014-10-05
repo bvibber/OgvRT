@@ -15,7 +15,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)ExtensionsDefs.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)critsec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OgvByteStreamHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OgvSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OgvStream.h" />
@@ -24,6 +23,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)OgvByteStreamHandler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)OgvSource.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)OgvStream.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

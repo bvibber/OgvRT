@@ -11,6 +11,9 @@
         if (!mediaExtensions) {
             mediaExtensions = new Windows.Media.MediaExtensionManager();
             mediaExtensions.registerByteStreamHandler("OgvSource.OgvByteStreamHandler", ".ogv", "video/ogg");
+            // In a fancier implementation we'd also register the
+            // Theora and Vorbis codecs, but this implementation
+            // does all the decoding in one go.
         }
     }
 

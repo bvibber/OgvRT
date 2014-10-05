@@ -1,5 +1,11 @@
 ﻿#pragma once
 
+#include <functional>
+#include <algorithm>
+#include <queue>
+#include <thread>
+#include <mutex>
+
 /*
 #include <collection.h>
 #include <ppltasks.h>
@@ -25,12 +31,12 @@
 #include <wrl\ftm.h>
 #include <wrl\event.h>
 #include <wrl\wrappers\corewrappers.h>
+#include <wrl\module.h>
 #include <windows.media.h>
 
 #include <ppltasks.h>
 
 #include "ExtensionsDefs.h"
-#include "critsec.h"
 
 using namespace Platform;
 using namespace Microsoft::WRL;

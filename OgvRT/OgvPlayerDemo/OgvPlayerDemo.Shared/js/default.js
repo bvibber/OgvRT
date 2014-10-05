@@ -5,6 +5,14 @@
 
     var app = WinJS.Application;
     var activation = Windows.ApplicationModel.Activation;
+    var mediaExtensions;
+
+    function initMediaExtensions() {
+        if (!mediaExtensions) {
+            mediaExtensions = new Windows.Media.MediaExtensionManager();
+            mediaExtensions.registerByteStreamHandler("OgvSource.OgvByteStreamHandler", ".ogv", "video/ogg");
+        }
+    }
 
     app.onactivated = function (args) {
         if (args.detail.kind === activation.ActivationKind.launch) {
@@ -16,16 +24,16 @@
                 // Restore application state here.
             }
 
+            initMediaExtensions();
+
             var player = document.getElementById('player');
             document.getElementById('play-mp4').addEventListener('click', function () {
                 player.src = "/media/sharks.mp4";
                 player.load();
-                console.log(player.src);
             });
             document.getElementById('play-ogv').addEventListener('click', function () {
                 player.src = "/media/sharks.ogv";
                 player.load();
-                console.log(player.src);
             });
             args.setPromise(WinJS.UI.processAll());
         }

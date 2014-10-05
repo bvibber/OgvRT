@@ -63,6 +63,12 @@
   <ItemGroup>
     <SDKReference Include="Microsoft.Phone.WinJS.2.1, Version=1.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libogg\winrt\VS2013\libogg.WindowsPhone\libogg.WindowsPhone.vcxproj" />
+    <ProjectReference Include="..\..\..\libtheora\winrt\VS2013\libtheora.WindowsPhone\libtheora.WindowsPhone.vcxproj" />
+    <ProjectReference Include="..\..\..\libvorbis\winrt\VS2013\libvorbis.WindowsPhone\libvorbis.WindowsPhone.vcxproj" />
+    <ProjectReference Include="..\..\..\OgvMF\OgvMF.WindowsPhone\OgvMF.WindowsPhone.vcxproj" />
+  </ItemGroup>
   <Import Project="..\OgvPlayerDemo.Shared\OgvPlayerDemo.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
   <!-- To modify your build process, add your task inside one of the targets below then uncomment

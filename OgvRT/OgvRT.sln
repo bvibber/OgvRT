@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OgvRT", "OgvRT", "{67EF0FFA-F44E-4932-AED3-2D49B7FB6513}"
 EndProject
@@ -56,14 +56,35 @@ Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "OgvPlayerDemo.Windows", "Og
 EndProject
 Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "OgvPlayerDemo.WindowsPhone", "OgvPlayerDemo\OgvPlayerDemo.WindowsPhone\OgvPlayerDemo.WindowsPhone.jsproj", "{8C362C66-5D90-44D8-910F-F979EE93ED89}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OGVCore", "OGVCore", "{261AD909-ACB9-422D-AE7E-0BF04AE06CB4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OGVCore.Shared", "OGVCore\OGVCore.Shared\OGVCore.Shared.vcxitems", "{E5644B74-C451-4871-8073-AE0BA8F18403}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OGVCore.Windows", "OGVCore\OGVCore.Windows\OGVCore.Windows.vcxproj", "{82525392-B640-4BCB-A766-C7344B6DE02D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3A214E06-B95E-4D61-A291-1F8DF2EC10FD} = {3A214E06-B95E-4D61-A291-1F8DF2EC10FD}
+		{653F3841-3F26-49B9-AFCF-091DB4B67031} = {653F3841-3F26-49B9-AFCF-091DB4B67031}
+		{15CBFEFF-7965-41F5-B4E2-21E8795C9159} = {15CBFEFF-7965-41F5-B4E2-21E8795C9159}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OGVCore.WindowsPhone", "OGVCore\OGVCore.WindowsPhone\OGVCore.WindowsPhone.vcxproj", "{EB815766-5C55-4686-AB54-05BA676BD66B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9C660B0E-B497-4F71-8FAA-F2543A3DF617} = {9C660B0E-B497-4F71-8FAA-F2543A3DF617}
+		{E1FBE4B1-56AD-4FE0-963E-9A599E842E79} = {E1FBE4B1-56AD-4FE0-963E-9A599E842E79}
+		{CA2978D4-286A-4AAB-94F6-F020F231625C} = {CA2978D4-286A-4AAB-94F6-F020F231625C}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		OgvRT\OgvRT.Shared\OgvRT.Shared.vcxitems*{bae17af7-fc01-4879-b028-cc012774b68b}*SharedItemsImports = 4
 		..\OgvMF\OgvMF.Shared\OgvMF.Shared.vcxitems*{29c85ec4-c331-4b45-8d80-64e0c6ad87c8}*SharedItemsImports = 4
+		OGVCore\OGVCore.Shared\OGVCore.Shared.vcxitems*{e5644b74-c451-4871-8073-ae0ba8f18403}*SharedItemsImports = 9
 		..\libvorbis\winrt\VS2013\libvorbis.Shared\libvorbis.Shared.vcxitems*{3a214e06-b95e-4d61-a291-1f8df2ec10fd}*SharedItemsImports = 4
 		OgvRT\OgvRT.Shared\OgvRT.Shared.vcxitems*{0f9ac104-46a7-4cb3-832f-e140cfc3db00}*SharedItemsImports = 4
+		OGVCore\OGVCore.Shared\OGVCore.Shared.vcxitems*{eb815766-5c55-4686-ab54-05ba676bd66b}*SharedItemsImports = 4
 		..\libvorbis\winrt\VS2013\libvorbis.Shared\libvorbis.Shared.vcxitems*{9c660b0e-b497-4f71-8faa-f2543a3df617}*SharedItemsImports = 4
 		OgvPlayerDemo\OgvPlayerDemo.Shared\OgvPlayerDemo.Shared.projitems*{d2a58065-fcde-43df-a73a-c2c2ef1f6848}*SharedItemsImports = 5
+		OGVCore\OGVCore.Shared\OGVCore.Shared.vcxitems*{82525392-b640-4bcb-a766-c7344b6de02d}*SharedItemsImports = 4
 		..\OgvMF\OgvMF.Shared\OgvMF.Shared.vcxitems*{3a463d9e-a4c3-4d7e-bb18-62ad0e55daaf}*SharedItemsImports = 4
 		..\libtheora\winrt\VS2013\libtheora.Shared\libtheora.Shared.vcxitems*{ca2978d4-286a-4aab-94f6-f020f231625c}*SharedItemsImports = 4
 		OgvPlayerDemo\OgvPlayerDemo.Shared\OgvPlayerDemo.Shared.projitems*{8c362c66-5d90-44d8-910f-f979ee93ed89}*SharedItemsImports = 5
@@ -327,6 +348,40 @@ Global
 		{8C362C66-5D90-44D8-910F-F979EE93ED89}.Release|x86.ActiveCfg = Release|x86
 		{8C362C66-5D90-44D8-910F-F979EE93ED89}.Release|x86.Build.0 = Release|x86
 		{8C362C66-5D90-44D8-910F-F979EE93ED89}.Release|x86.Deploy.0 = Release|x86
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|ARM.ActiveCfg = Debug|ARM
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|ARM.Build.0 = Debug|ARM
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|Win32.Build.0 = Debug|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|x64.ActiveCfg = Debug|x64
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|x64.Build.0 = Debug|x64
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|x86.ActiveCfg = Debug|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Debug|x86.Build.0 = Debug|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|Any CPU.ActiveCfg = Release|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|ARM.ActiveCfg = Release|ARM
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|ARM.Build.0 = Release|ARM
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|Win32.ActiveCfg = Release|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|Win32.Build.0 = Release|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|x64.ActiveCfg = Release|x64
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|x64.Build.0 = Release|x64
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|x86.ActiveCfg = Release|Win32
+		{82525392-B640-4BCB-A766-C7344B6DE02D}.Release|x86.Build.0 = Release|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Debug|ARM.ActiveCfg = Debug|ARM
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Debug|ARM.Build.0 = Debug|ARM
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Debug|Win32.Build.0 = Debug|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Debug|x64.ActiveCfg = Debug|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Debug|x86.ActiveCfg = Debug|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Debug|x86.Build.0 = Debug|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Release|Any CPU.ActiveCfg = Release|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Release|ARM.ActiveCfg = Release|ARM
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Release|ARM.Build.0 = Release|ARM
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Release|Win32.ActiveCfg = Release|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Release|Win32.Build.0 = Release|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Release|x64.ActiveCfg = Release|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Release|x86.ActiveCfg = Release|Win32
+		{EB815766-5C55-4686-AB54-05BA676BD66B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -347,5 +402,8 @@ Global
 		{A6BDC376-0CFB-4C2E-9B0D-FCE439B5B20B} = {EB5EACC3-CD48-49C8-A9C5-0DEC7DD96B9B}
 		{D2A58065-FCDE-43DF-A73A-C2C2EF1F6848} = {EB5EACC3-CD48-49C8-A9C5-0DEC7DD96B9B}
 		{8C362C66-5D90-44D8-910F-F979EE93ED89} = {EB5EACC3-CD48-49C8-A9C5-0DEC7DD96B9B}
+		{E5644B74-C451-4871-8073-AE0BA8F18403} = {261AD909-ACB9-422D-AE7E-0BF04AE06CB4}
+		{82525392-B640-4BCB-A766-C7344B6DE02D} = {261AD909-ACB9-422D-AE7E-0BF04AE06CB4}
+		{EB815766-5C55-4686-AB54-05BA676BD66B} = {261AD909-ACB9-422D-AE7E-0BF04AE06CB4}
 	EndGlobalSection
 EndGlobal

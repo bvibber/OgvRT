@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{e5644b74-c451-4871-8073-ae0ba8f18403}</ItemsProjectGuid>
+    <ItemsRootNamespace>OGVCore</ItemsRootNamespace>
+    <ItemsProjectName>OGVCore.Shared</ItemsProjectName>
+    <CodeSharingProject>248F659F-DAC5-46E8-AC09-60EC9FC95053</CodeSharingProject>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\include\OGVCore.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\include\skeleton\skeleton.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\include\skeleton\skeleton_constants.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\include\skeleton\skeleton_query.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\src\skeleton_macros.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\src\skeleton_private.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\src\skeleton_vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\src\OGVCore\Bisector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\src\skeleton.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\src\skeleton_query.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\libskeleton\src\skeleton_vector.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\src\OGVCore\Decoder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\OGVCore\src\OGVCore\Player.cpp" />
+  </ItemGroup>
+</Project>

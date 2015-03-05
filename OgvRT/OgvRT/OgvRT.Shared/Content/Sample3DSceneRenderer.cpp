@@ -70,26 +70,26 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 	//CreateTexture(640, 480, m_textureCr, m_textureViewCr);
 }
 
-void Sample3DSceneRenderer::UpdateTextures(OgvCodec::Frame frame) {
-	int lumaWidth = frame.strideY,
-		chromaWidth = frame.strideCb,
-		lumaHeight = frame.height,
-		chromaHeight = frame.height >> frame.vdec;
+void Sample3DSceneRenderer::UpdateTextures(OGVCore::FrameBuffer &frame) {
+	int lumaWidth = frame.Y.stride,
+		chromaWidth = frame.Cb.stride,
+		lumaHeight = frame.Y.height,
+		chromaHeight = frame.Cb.height;
 	
 	if (!m_textureY) {
 		CreateTexture(lumaWidth, lumaHeight, m_textureY, m_textureViewY, m_samplerY);
 	}
-	UpdateTexture(m_textureY, frame.bytesY, lumaWidth * lumaHeight);
+	UpdateTexture(m_textureY, frame.Y.bytes, lumaWidth * lumaHeight);
 
 	if (!m_textureCb) {
 		CreateTexture(chromaWidth, chromaHeight, m_textureCb, m_textureViewCb, m_samplerCb);
 	}
-	UpdateTexture(m_textureCb, frame.bytesCb, chromaWidth * chromaHeight);
+	UpdateTexture(m_textureCb, frame.Cb.bytes, chromaWidth * chromaHeight);
 
 	if (!m_textureCr) {
 		CreateTexture(chromaWidth, chromaHeight, m_textureCr, m_textureViewCr, m_samplerCr);
 	}
-	UpdateTexture(m_textureCr, frame.bytesCr, chromaWidth * chromaHeight);
+	UpdateTexture(m_textureCr, frame.Cr.bytes, chromaWidth * chromaHeight);
 }
 
 void Sample3DSceneRenderer::UpdateTexture(ComPtr<ID3D11Texture2D> &tex, const byte *bytes, int nbytes) {

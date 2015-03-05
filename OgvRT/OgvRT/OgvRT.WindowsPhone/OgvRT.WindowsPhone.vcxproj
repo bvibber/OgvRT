@@ -75,10 +75,10 @@
       <AdditionalDependencies>WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;DXGI.lib;D3D11.lib;D2D1.lib;DWrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Brion\Documents\GitHub\OgvRT\libogg\include;C:\Users\Brion\Documents\GitHub\OgvRT\libvorbis\include;C:\Users\Brion\Documents\GitHub\OgvRT\libtheora\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\libogg\include;..\..\..\libvorbis\include;..\..\..\libtheora\include;..\..\..\OGVCore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Brion\Documents\GitHub\OgvRT\libogg\include;C:\Users\Brion\Documents\GitHub\OgvRT\libvorbis\include;C:\Users\Brion\Documents\GitHub\OgvRT\libtheora\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\libogg\include;..\..\..\libvorbis\include;..\..\..\libtheora\include;..\..\..\OGVCore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='ARM'">
@@ -87,10 +87,10 @@
       <AdditionalDependencies>WindowsPhoneCore.lib;RuntimeObject.lib;PhoneAppModelHost.lib;DXGI.lib;D3D11.lib;D2D1.lib;DWrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">C:\Users\Brion\Documents\GitHub\OgvRT\libogg\include;C:\Users\Brion\Documents\GitHub\OgvRT\libvorbis\include;C:\Users\Brion\Documents\GitHub\OgvRT\libtheora\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">..\..\..\libogg\include;..\..\..\libvorbis\include;..\..\..\libtheora\include;..\..\..\OGVCore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">C:\Users\Brion\Documents\GitHub\OgvRT\libogg\include;C:\Users\Brion\Documents\GitHub\OgvRT\libvorbis\include;C:\Users\Brion\Documents\GitHub\OgvRT\libtheora\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">..\..\..\libogg\include;..\..\..\libvorbis\include;..\..\..\libtheora\include;..\..\..\OGVCore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <PropertyGroup Label="UserMacros" />
@@ -145,6 +145,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\libvorbis\winrt\VS2013\libvorbis.WindowsPhone\libvorbis.WindowsPhone.vcxproj">
       <Project>{9c660b0e-b497-4f71-8faa-f2543a3df617}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OGVCore\OGVCore.WindowsPhone\OGVCore.WindowsPhone.vcxproj">
+      <Project>{eb815766-5c55-4686-ab54-05ba676bd66b}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

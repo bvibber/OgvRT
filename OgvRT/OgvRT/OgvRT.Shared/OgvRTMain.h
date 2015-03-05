@@ -5,7 +5,7 @@
 #include "Content\Sample3DSceneRenderer.h"
 #include "Content\SampleFpsTextRenderer.h"
 
-#include "OgvCodec.h"
+#include <OGVCore.h>
 
 // Renders Direct2D and 3D content on the screen.
 namespace OgvRT
@@ -39,7 +39,7 @@ namespace OgvRT
 		// TODO: Replace with your own content renderers.
 		std::unique_ptr<Sample3DSceneRenderer> m_sceneRenderer;
 		std::unique_ptr<SampleFpsTextRenderer> m_fpsTextRenderer;
-		std::unique_ptr<OgvCodec::Codec> m_codec;
+		std::unique_ptr<OGVCore::Decoder> m_codec;
 
 		Windows::Foundation::IAsyncAction^ m_renderLoopWorker;
 		Concurrency::critical_section m_criticalSection;

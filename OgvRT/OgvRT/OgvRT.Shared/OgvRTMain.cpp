@@ -19,7 +19,7 @@ OgvRTMain::OgvRTMain(const std::shared_ptr<DX::DeviceResources>& deviceResources
 
 	m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
 
-	m_codec = std::unique_ptr<OgvCodec::Codec>(new OgvCodec::Codec());
+	m_codec = std::unique_ptr<OGVCore::Decoder>(new OGVCore::Decoder(nullptr));
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
@@ -93,10 +93,12 @@ void OgvRTMain::Update()
 	ProcessInput();
 
 	m_codec->process();
-	if (m_codec->frameReady()) {
-		m_codec->decodeFrame([&](OgvCodec::Frame frame) {
-			m_sceneRenderer->UpdateTextures(frame);
-		});
+	if (m_codec->isFrameReady()) {
+		auto ok = m_codec->decodeFrame();
+		if (ok) {
+			auto frame = m_codec->dequeueFrame();
+			m_sceneRenderer->UpdateTextures(*frame);
+		}
 	}
 
 	// Update scene objects.

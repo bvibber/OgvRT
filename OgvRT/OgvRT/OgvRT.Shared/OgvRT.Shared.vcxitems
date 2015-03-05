@@ -14,14 +14,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)OgvCodec.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)OgvPlayer.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClInclude Include="$(MSBuildThisFileDirectory)OgvCodec.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)OgvPlayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OgvRTMain.h" />
     <ClCompile Include="$(MSBuildThisFileDirectory)OgvRTMain.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

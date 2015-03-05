@@ -18,12 +18,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Content\SampleFpsTextRenderer.h">
       <Filter>Content</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)OgvCodec.h">
-      <Filter>Content</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)OgvPlayer.h">
-      <Filter>Content</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)OgvRTMain.cpp" />
@@ -35,12 +29,6 @@
       <Filter>Content</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Content\SampleFpsTextRenderer.cpp">
-      <Filter>Content</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)OgvCodec.cpp">
-      <Filter>Content</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)OgvPlayer.cpp">
       <Filter>Content</Filter>
     </ClCompile>
   </ItemGroup>

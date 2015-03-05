@@ -4,7 +4,7 @@
 #include "ShaderStructures.h"
 #include "..\Common\StepTimer.h"
 
-#include "OgvCodec.h"
+#include <OGVCore.h>
 
 namespace OgvRT
 {
@@ -17,7 +17,7 @@ namespace OgvRT
 		void CreateWindowSizeDependentResources();
 		void ReleaseDeviceDependentResources();
 		void Update(DX::StepTimer const& timer);
-		void UpdateTextures(OgvCodec::Frame frame);
+		void UpdateTextures(OGVCore::FrameBuffer &frame);
 		void Render();
 		void StartTracking();
 		void TrackingUpdate(float positionX);

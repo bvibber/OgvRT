@@ -9,7 +9,9 @@ using namespace Concurrency;
 
 // Loads and initializes application assets when the application is loaded.
 OgvRTMain::OgvRTMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
-	m_deviceResources(deviceResources), m_pointerLocationX(0.0f)
+	m_deviceResources(deviceResources),
+	m_pointerLocationX(0.0f),
+	m_codec(std::make_unique<OGVCore::Decoder>())
 {
 	// Register to be notified if the Device is lost or recreated
 	m_deviceResources->RegisterDeviceNotify(this);
@@ -19,7 +21,9 @@ OgvRTMain::OgvRTMain(const std::shared_ptr<DX::DeviceResources>& deviceResources
 
 	m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
 
-	m_codec = std::unique_ptr<OGVCore::Decoder>(new OGVCore::Decoder(nullptr));
+	m_codec->setOnLoadedMetadata([]() {
+		// how exciting!
+	});
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
@@ -93,7 +97,7 @@ void OgvRTMain::Update()
 	ProcessInput();
 
 	m_codec->process();
-	if (m_codec->isFrameReady()) {
+	if (m_codec->frameReady()) {
 		auto ok = m_codec->decodeFrame();
 		if (ok) {
 			auto frame = m_codec->dequeueFrame();

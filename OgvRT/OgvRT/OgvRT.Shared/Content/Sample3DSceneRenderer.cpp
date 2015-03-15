@@ -251,10 +251,10 @@ void Sample3DSceneRenderer::Render()
 	context->PSSetSamplers(0, 1, m_samplerY.GetAddressOf());
 
 	context->PSSetShaderResources(1, 1, m_textureViewCb.GetAddressOf());
-	context->PSSetSamplers(0, 1, m_samplerCb.GetAddressOf());
+	context->PSSetSamplers(1, 1, m_samplerCb.GetAddressOf());
 
 	context->PSSetShaderResources(2, 1, m_textureViewCr.GetAddressOf());
-	context->PSSetSamplers(0, 1, m_samplerCr.GetAddressOf());
+	context->PSSetSamplers(2, 1, m_samplerCr.GetAddressOf());
 
 	// Draw the objects.
 	context->DrawIndexed(

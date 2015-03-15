@@ -98,11 +98,9 @@ void OgvRTMain::Update()
 
 	m_codec->process();
 	if (m_codec->frameReady()) {
-		auto ok = m_codec->decodeFrame();
-		if (ok) {
-			auto frame = m_codec->dequeueFrame();
-			m_sceneRenderer->UpdateTextures(*frame);
-		}
+		auto ok = m_codec->decodeFrame([this](OGVCore::FrameBuffer &frame) {
+			m_sceneRenderer->UpdateTextures(frame);
+		});
 	}
 
 	// Update scene objects.
